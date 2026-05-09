@@ -19,13 +19,13 @@ const pool = mysql.createPool({
 const testConnection = async () => {
   try {
     const connection = await pool.getConnection();
-    console.log("✅ MySQL Database connected successfully");
+    console.log(" MySQL Database connected successfully");
     console.log(
       `   Host: ${process.env.DB_HOST} | DB: ${process.env.DB_NAME}`
     );
     connection.release();
   } catch (error) {
-    console.error("❌ Database connection failed:", error.message);
+    console.error(" Database connection failed:", error.message);
     process.exit(1);
   }
 };

@@ -54,16 +54,16 @@ const setupDatabase = async () => {
         ('Kendriya Vidyalaya', 'Chankyapuri, New Delhi, Delhi 110021', 28.5972, 77.1855),
         ('The Cathedral School', 'CST Road, Mumbai, Maharashtra 400098', 19.0760, 72.8777)
       `);
-      console.log("✅ Sample data inserted (5 schools)");
+      console.log(" Sample data inserted (5 schools)");
     } else {
       console.log(
         `ℹ️  Schools table already has ${existing[0].count} record(s), skipping sample data`
       );
     }
 
-    console.log("\n🎉 Database setup complete! You can now start the server.");
+    console.log("\n Database setup complete! You can now start the server.");
   } catch (error) {
-    console.error("❌ Database setup failed:", error.message);
+    console.error("Database setup failed:", error.message);
     process.exit(1);
   } finally {
     if (connection) await connection.end();
