@@ -1,0 +1,251 @@
+{
+  "info": {
+    "_postman_id": "school-mgmt-api-collection",
+    "name": "School Management API",
+    "description": "Complete API collection for School Management System.\n\nEndpoints:\n- POST /addSchool — Add a new school\n- GET /listSchools — List schools sorted by proximity\n\nBase URL: http://localhost:3000\n\nFor production, replace the base URL with your hosted endpoint.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Change to your hosted URL for production testing"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Verify the API server is running and see available endpoints."
+      },
+      "response": [
+        {
+          "name": "Server Running",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/", "host": ["{{base_url}}"], "path": [""] }
+          },
+          "status": "OK",
+          "code": 200,
+          "body": "{\n  \"success\": true,\n  \"message\": \"School Management API is running 🎓\",\n  \"version\": \"1.0.0\",\n  \"endpoints\": {\n    \"addSchool\": { \"method\": \"POST\", \"path\": \"/addSchool\" },\n    \"listSchools\": { \"method\": \"GET\", \"path\": \"/listSchools\" }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Add School",
+      "item": [
+        {
+          "name": "Add School — Success",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Delhi Public School\",\n  \"address\": \"Mathura Road, New Delhi, Delhi 110019\",\n  \"latitude\": 28.5355,\n  \"longitude\": 77.2510\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            },
+            "description": "Add a new school with valid name, address, latitude, and longitude.\n\n**Expected Response:** 201 Created with the newly inserted school object."
+          },
+          "response": [
+            {
+              "name": "201 - School Added",
+              "originalRequest": {
+                "method": "POST",
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Delhi Public School\",\n  \"address\": \"Mathura Road, New Delhi, Delhi 110019\",\n  \"latitude\": 28.5355,\n  \"longitude\": 77.2510\n}"
+                },
+                "url": { "raw": "{{base_url}}/addSchool" }
+              },
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"success\": true,\n  \"message\": \"School added successfully\",\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Delhi Public School\",\n    \"address\": \"Mathura Road, New Delhi, Delhi 110019\",\n    \"latitude\": 28.5355,\n    \"longitude\": 77.251,\n    \"created_at\": \"2024-01-15T10:30:00.000Z\",\n    \"updated_at\": \"2024-01-15T10:30:00.000Z\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add School — Missing Fields",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Incomplete School\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            },
+            "description": "Test validation — missing address, latitude, longitude.\n\n**Expected Response:** 400 Bad Request with validation errors."
+          },
+          "response": [
+            {
+              "name": "400 - Validation Error",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": [\n    { \"field\": \"address\", \"message\": \"Address is required\" },\n    { \"field\": \"latitude\", \"message\": \"Latitude is required\" },\n    { \"field\": \"longitude\", \"message\": \"Longitude is required\" }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add School — Invalid Coordinates",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bad Coords School\",\n  \"address\": \"Some Address\",\n  \"latitude\": 999,\n  \"longitude\": -999\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            },
+            "description": "Test coordinate range validation. Latitude must be -90 to 90, longitude -180 to 180.\n\n**Expected Response:** 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Add School — St. Xavier (Mumbai)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"St. Xavier High School\",\n  \"address\": \"CST Road, Mumbai, Maharashtra 400098\",\n  \"latitude\": 19.0760,\n  \"longitude\": 72.8777\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/addSchool",
+              "host": ["{{base_url}}"],
+              "path": ["addSchool"]
+            },
+            "description": "Add a school in Mumbai to test multi-city proximity sorting."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "List Schools",
+      "item": [
+        {
+          "name": "List Schools — From New Delhi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?latitude=28.6139&longitude=77.2090",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                {
+                  "key": "latitude",
+                  "value": "28.6139",
+                  "description": "User latitude (New Delhi)"
+                },
+                {
+                  "key": "longitude",
+                  "value": "77.2090",
+                  "description": "User longitude (New Delhi)"
+                }
+              ]
+            },
+            "description": "Fetch all schools sorted by distance from New Delhi (28.6139, 77.2090).\n\nSchools geographically closer to New Delhi will appear first.\n\n**Expected Response:** 200 OK with sorted array including distance_km."
+          },
+          "response": [
+            {
+              "name": "200 - Sorted Schools List",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"success\": true,\n  \"message\": \"Schools fetched and sorted by proximity\",\n  \"userLocation\": {\n    \"latitude\": 28.6139,\n    \"longitude\": 77.209\n  },\n  \"count\": 3,\n  \"data\": [\n    {\n      \"id\": 4,\n      \"name\": \"Kendriya Vidyalaya\",\n      \"address\": \"Chankyapuri, New Delhi, Delhi 110021\",\n      \"latitude\": 28.5972,\n      \"longitude\": 77.1855,\n      \"created_at\": \"2024-01-15T10:00:00.000Z\",\n      \"distance_km\": 3.21\n    },\n    {\n      \"id\": 1,\n      \"name\": \"Delhi Public School\",\n      \"address\": \"Mathura Road, New Delhi, Delhi 110019\",\n      \"latitude\": 28.5355,\n      \"longitude\": 77.251,\n      \"created_at\": \"2024-01-15T10:00:00.000Z\",\n      \"distance_km\": 8.78\n    },\n    {\n      \"id\": 5,\n      \"name\": \"St. Xavier High School\",\n      \"address\": \"CST Road, Mumbai, Maharashtra 400098\",\n      \"latitude\": 19.076,\n      \"longitude\": 72.8777,\n      \"created_at\": \"2024-01-15T10:00:00.000Z\",\n      \"distance_km\": 1147.32\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Schools — From Mumbai",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?latitude=19.0760&longitude=72.8777",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                { "key": "latitude", "value": "19.0760", "description": "Mumbai latitude" },
+                { "key": "longitude", "value": "72.8777", "description": "Mumbai longitude" }
+              ]
+            },
+            "description": "Fetch all schools sorted by proximity to Mumbai. Schools in Mumbai will appear first."
+          },
+          "response": []
+        },
+        {
+          "name": "List Schools — Missing Params",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"]
+            },
+            "description": "Test validation — no query params provided.\n\n**Expected Response:** 400 Bad Request with validation errors."
+          },
+          "response": [
+            {
+              "name": "400 - Missing Coordinates",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"success\": false,\n  \"message\": \"Validation failed\",\n  \"errors\": [\n    { \"field\": \"latitude\", \"message\": \"Latitude query parameter is required\" },\n    { \"field\": \"longitude\", \"message\": \"Longitude query parameter is required\" }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Schools — From Kolkata",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/listSchools?latitude=22.5726&longitude=88.3639",
+              "host": ["{{base_url}}"],
+              "path": ["listSchools"],
+              "query": [
+                { "key": "latitude", "value": "22.5726" },
+                { "key": "longitude", "value": "88.3639" }
+              ]
+            },
+            "description": "Fetch schools sorted from Kolkata's perspective."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
